@@ -146,6 +146,84 @@ class TreeNode {
         return currentLeafIds;
     }
 
+    setPrimerapos = (): Array<number> => {
+        let primerapos: Array<number> = [];
+
+        if (this.isLeaf()) {
+            if (this.leafId !== null && this.value !== "&") {
+                primerapos = [this.leafId];
+            }
+        } else if (this.type === 1) { // type |
+            if (this.leftChild !== null && this.rightChild !== null) {
+                primerapos = [...this.leftChild.setPrimerapos(), ...this.rightChild.setPrimerapos()];
+            }
+        } else if (this.type === 2) { // type .
+            if (this.leftChild !== null && this.rightChild !== null) {
+                if (this.leftChild.nullable) {
+                    primerapos = [...this.leftChild.setPrimerapos(), ...this.rightChild.setPrimerapos()];
+                } else {
+                    this.rightChild.setPrimerapos();
+                    primerapos = [...this.leftChild.setPrimerapos()];
+                }
+            }
+        } else if (this.type === 3) { // type *
+            if (this.rightChild !== null) {
+                primerapos = [...this.rightChild.setPrimerapos()];
+            }
+        } else if (this.type === 4) { // type +
+            if (this.rightChild !== null) {
+                primerapos = [...this.rightChild.setPrimerapos()];
+            }
+        } else if (this.type === 5) { // type ?
+            if (this.rightChild !== null) {
+                primerapos = [...this.rightChild.setPrimerapos()];
+            }
+        }
+
+        this.primerapos = primerapos;
+
+        return primerapos;
+    }
+
+    setUltimapos = (): Array<number> => {
+        let ultimapos: Array<number> = [];
+
+        if (this.isLeaf()) {
+            if (this.leafId !== null && this.value !== "&") {
+                ultimapos = [this.leafId];
+            }
+        } else if (this.type === 1) { // type |
+            if (this.leftChild !== null && this.rightChild !== null) {
+                ultimapos = [...this.leftChild.setUltimapos(), ...this.rightChild.setUltimapos()];
+            }
+        } else if (this.type === 2) { // type .
+            if (this.leftChild !== null && this.rightChild !== null) {
+                if (this.rightChild.nullable) {
+                    ultimapos = [...this.leftChild.setUltimapos(), ...this.rightChild.setUltimapos()];
+                } else {
+                    this.leftChild.setUltimapos();
+                    ultimapos = [...this.rightChild.setUltimapos()];
+                }
+            }
+        } else if (this.type === 3) { // type *
+            if (this.rightChild !== null) {
+                ultimapos = [...this.rightChild.setUltimapos()];
+            }
+        } else if (this.type === 4) { // type +
+            if (this.rightChild !== null) {
+                ultimapos = [...this.rightChild.setUltimapos()];
+            }
+        } else if (this.type === 5) { // type ?
+            if (this.rightChild !== null) {
+                ultimapos = [...this.rightChild.setUltimapos()];
+            }
+        }
+
+        this.ultimapos = ultimapos;
+
+        return ultimapos;
+    }
+
 }
 
 export default TreeNode;
