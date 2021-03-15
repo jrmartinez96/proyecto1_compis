@@ -20,7 +20,7 @@ class App extends React.Component<AppProps, AppState> {
   state = {
     regularExpression: '(a*|b*)c',
     evaluateText: 'abbba',
-    process: 0, // 0: sin evaluar, 1: ya hay arbol sintactico, 2: ya hay afn, 3: ya hay afd
+    process: 0, // 0: sin evaluar, 1: ya hay arbol sintactico, 2: ya hay afn, 3: ya hay afd, 4 ya hay afd directo
     // --------------- SYNTACTIC TREE
     treeData: {},
     treeNode: new TreeNode(0, '', null, null),
@@ -29,7 +29,9 @@ class App extends React.Component<AppProps, AppState> {
     afnD3Data: {nodes: [], links: []},
     // --------------- AFD
     afdTransitionTable: {},
-    afdD3Data: {nodes: [], links: []}
+    afdD3Data: {nodes: [], links: []},
+    // --------------- AFD DIRECT
+    afdDirectD3Data: {nodes: [], links: []},
   }
 
   convertRegularExpressionToTree = () => {
@@ -56,7 +58,8 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   convertRegularExpressionToAFD = () => {
-    re_to_afd(this.state.regularExpression);
+    const afdDirectData = re_to_afd(this.state.regularExpression);
+    this.setState({afdDirectD3Data: afdDirectData.d3GraphData, process: 4});
   }
 
   render() { 
@@ -95,10 +98,16 @@ class App extends React.Component<AppProps, AppState> {
           <NodeGraph data={this.state.afnD3Data}/>
         </div>
       );
-    } else if (this.state.process === 3) { // Hay AFN
+    } else if (this.state.process === 3) { // Hay AFD
       return (
         <div>
           <NodeGraph data={this.state.afdD3Data}/>
+        </div>
+      );
+    } else if (this.state.process === 4) { // Hay AFD Directo
+      return (
+        <div>
+          <NodeGraph data={this.state.afdDirectD3Data}/>
         </div>
       );
     }

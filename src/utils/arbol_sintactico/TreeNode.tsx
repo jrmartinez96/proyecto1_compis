@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { deleteArrayDuplicates } from '../afd/array_functions';
 /**
  * type: 
  *      0: id
@@ -222,6 +223,44 @@ class TreeNode {
         this.ultimapos = ultimapos;
 
         return ultimapos;
+    }
+
+    setSiguientepos = (siguientepos: any):any => {
+        let siguienteposCopy = {...siguientepos};
+
+        if (this.type === 2) {
+            if (this.leftChild !== null && this.leftChild.ultimapos !== null) {
+                this.leftChild.ultimapos.forEach(id => {
+                    if (this.rightChild !== null && this.rightChild.primerapos !== null) {
+                        siguienteposCopy[id] = [...siguienteposCopy[id], ...this.rightChild?.primerapos];
+                    }
+                });
+            }
+        } else if (this.type === 3) {
+            if (this.ultimapos !== null) {
+                this.ultimapos.forEach(id => {
+                    if (this.primerapos !== null) {
+                        siguienteposCopy[id] = [...siguienteposCopy[id], ...this.primerapos];
+                    }
+                });
+            }
+        }
+
+        const siguienteposKeys = Object.keys(siguienteposCopy);
+        siguienteposKeys.forEach(key => {
+            const spos = [...siguienteposCopy[key]];
+            siguienteposCopy[key] = deleteArrayDuplicates(spos).sort((a, b) => a-b);
+        });
+
+        if (this.leftChild !== null) {
+            siguienteposCopy = this.leftChild.setSiguientepos(siguienteposCopy);
+        }
+
+        if (this.rightChild !== null) {
+            siguienteposCopy = this.rightChild.setSiguientepos(siguienteposCopy);
+        }
+
+        return siguienteposCopy;
     }
 
 }
