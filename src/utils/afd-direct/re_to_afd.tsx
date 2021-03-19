@@ -21,7 +21,6 @@ export const re_to_afd = (regularExpression: string) => {
     });
     siguientepos = treeNode.setSiguientepos(siguientepos);
 
-    console.log(siguientepos);
     // Constantes y variables de uso
     const languageCharacters = getLanguageCharactersFromTreeNode(treeNode);
     let stateTable: any = {
@@ -31,6 +30,7 @@ export const re_to_afd = (regularExpression: string) => {
             isDoneChecking: false
         }
     };
+    
     let transitionTable: any = {
         "A": {}
     };
@@ -81,9 +81,9 @@ export const re_to_afd = (regularExpression: string) => {
     console.log(stateTable);
     console.log(transitionTable);
 
-    const d3GraphData = convertAFDToD3Graph(transitionTable, stateTable, leafNodesIds, languageCharacters);
+    const d3GraphData = convertAFDToD3Graph(transitionTable, stateTable, leafNodesIds, languageCharacters, treeNode.primerapos);
 
-    return {stateTable, transitionTable, d3GraphData}
+    return {stateTable, transitionTable, d3GraphData, primeraposRaiz: treeNode.primerapos, leafNodesIds, languageCharacters}
 }
 
 const isAllDoneChecking = (transitionTable: any): boolean => {
@@ -187,7 +187,7 @@ const convertCharacterSetToState = (statesTable: any, transitionTable: any, lang
     return newTransitionTable;
 }
 
-const convertAFDToD3Graph = (afdTransitionTable: any, afdStateTable: any, leafNodesIds: any, languageCharacters: Array<string>): any => {
+const convertAFDToD3Graph = (afdTransitionTable: any, afdStateTable: any, leafNodesIds: any, languageCharacters: Array<string>, primeraposRaiz: any): any => {
     let nodes: Array<any> = [];
     let links: Array<any> = [];
 
@@ -198,7 +198,7 @@ const convertAFDToD3Graph = (afdTransitionTable: any, afdStateTable: any, leafNo
     const states = Object.keys(afdTransitionTable);
     states.forEach(state => {
         const set = afdStateTable[state]["set"];
-        nodes.push({id: state, label: state, isInitial: set.indexOf(1) !== -1, isFinal: set.indexOf(acceptanceNode) !== -1});
+        nodes.push({id: state, label: state, isInitial: areArraysEqual(primeraposRaiz, set), isFinal: set.indexOf(acceptanceNode) !== -1});
 
         languageCharacters.forEach((character) => {
             const characterTarget = afdTransitionTable[state][character];

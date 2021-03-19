@@ -53,6 +53,7 @@ export const afn_to_afd = (treeNode: TreeNode):any => {
     }
 
     transitionTable = convertCharacterSetToState(transitionTable, languageCharacters);
+    console.log(transitionTable);
 
     return transitionTable;
 }
@@ -102,7 +103,7 @@ const move = (afn: Array<Array<string|undefined>>, states: Array<number>, charac
     return moveSet;
 }
 
-const getLanguageCharactersFromTreeNode = (treeNode: TreeNode): Array<string> => {
+export const getLanguageCharactersFromTreeNode = (treeNode: TreeNode): Array<string> => {
     let characters: Array<string> = [];
 
     // Obtener caracteres del lenguaje
@@ -209,29 +210,3 @@ export const convertAFDToD3Graph = (treeNode: TreeNode): any => {
     return {nodes: nodes, links:links};
 }
 
-/**
- * const eClosure = (afn: Array<Array<string|undefined>>, states: Array<number>, alreadyChecked: Array<number>): Array<number> => {
-    let set: Array<number> = [];
-    let alreadyCheckedCopy: Array<number>  = [...alreadyChecked];
-
-    states.forEach((state) => {
-        set = [...set, state]; // Siempre se agrega el estado que se evalua
-        alreadyCheckedCopy = deleteArrayDuplicates([...alreadyCheckedCopy, ...set])
-        let stateSet: Array<number> = [];
-
-        afn[state].forEach((transition, index) => {
-            if (transition === '&') {
-                stateSet = [...stateSet, index];
-            }
-        });
-
-        stateSet = eClosure(afn, removeAllOccurencesFromArray(stateSet, alreadyChecked), alreadyCheckedCopy);
-
-        set = [...set, ...stateSet];
-    });
-
-    const setWithoutDuplicates: Array<number> = deleteArrayDuplicates(set);
-
-    return setWithoutDuplicates;
-}
- */
